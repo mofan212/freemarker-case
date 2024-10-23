@@ -1,13 +1,11 @@
 package indi.mofan.templates;
 
 
-import freemarker.template.Template;
-import indi.mofan.conf.FreeMarkerConfig;
+import indi.mofan.util.FreeMarkerUtil;
 import lombok.SneakyThrows;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.StringWriter;
 import java.util.HashMap;
 
 /**
@@ -25,9 +23,9 @@ public class HelloWorldTest implements WithAssertions {
         latest.put("url", "products/greenmouse.html");
         latest.put("name", "green mouse");
 
-        Template temp = FreeMarkerConfig.CONFIG.getTemplate("hello-world.html.ftl");
-        StringWriter out = new StringWriter();
-        temp.process(root, out);
-        assertThat(out.toString()).isNotEmpty();
+        String res = FreeMarkerUtil.precessTemplateToString("hello-world.html.ftl", root);
+        assertThat(res).isNotEmpty()
+                .doesNotContain("user", "latestProduct.url", "latestProduct.name")
+                .contains("Big Joe", "products/greenmouse.html", "green mouse");
     }
 }

@@ -1,4 +1,4 @@
-package indi.mofan.conf;
+package indi.mofan.config;
 
 
 import freemarker.template.Configuration;
