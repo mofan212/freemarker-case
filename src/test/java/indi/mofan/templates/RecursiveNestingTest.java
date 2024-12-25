@@ -20,15 +20,7 @@ public class RecursiveNestingTest implements WithAssertions {
     @Test
     @SneakyThrows
     public void test() {
-        var entityMap = Map.of(
-                "1", new Entity("Son", "son"),
-                "2", new Entity("Parent", "parent"),
-                "3", new Entity("Grandson", "grandson")
-        );
-        var root = Map.of(
-                "entityMap", entityMap,
-                "path", List.of("2", "1", "3")
-        );
+        var root = buildTemplateParam();
 
         String res = FreeMarkerUtil.precessTemplateToString("recursive-nesting.java.ftl", root);
         assertThat(res.trim()).isNotBlank()
@@ -36,6 +28,31 @@ public class RecursiveNestingTest implements WithAssertions {
                 .contains("itemGrandson.addError(\"Error Info\");");
     }
 
+    @Test
+    @SneakyThrows
+    public void testDiffPositionNestedLabel() {
+        var root = buildTemplateParam();
+        String res = FreeMarkerUtil.precessTemplateToString("recursive-nesting-2.java.ftl", root);
+        assertThat(res.trim()).isNotBlank()
+                .hasLineCount(25)
+                .contains("dto.addError(\"Error Info\");");
+    }
+
+    private Map<String, Object> buildTemplateParam() {
+        var entityMap = Map.of(
+                "1", new Entity("Son", "son"),
+                "2", new Entity("Parent", "parent"),
+                "3", new Entity("Grandson", "grandson")
+        );
+        return Map.of(
+                "entityMap", entityMap,
+                "path", List.of("2", "1", "3")
+        );
+    }
+
+    /**
+     * 模板使用参数，不可修改 public 的访问修饰符
+     */
     @Getter
     @AllArgsConstructor
     public static class Entity {
